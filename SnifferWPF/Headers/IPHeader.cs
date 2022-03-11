@@ -2,7 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
+using System.Windows;
 
 namespace SnifferWPF
 {
@@ -24,6 +24,7 @@ namespace SnifferWPF
 
         public byte[] Data { get => data; }
         public byte Protocol { get => rawProtocol; }
+        public uint SourceIP { get => rawSourceAddress; }
 
         public IPHeader(byte[] buffer, int length)
         {
@@ -63,7 +64,7 @@ namespace SnifferWPF
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                MessageBox.Show($"{e.Message}\n{e.StackTrace}");
             }
         }
     }

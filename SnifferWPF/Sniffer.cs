@@ -1,40 +1,40 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Windows;
 
 namespace SnifferWPF
 {
     enum TransportProtocol { ICMP = 1, TCP = 6, UDP = 17, Other = 0 }
-    class Program
-    {
-        private static byte[] buffer = new byte[8192];
-        //private static Socket socket;
 
-        public static void Start()
+    static class Sniffer
+    {
+        private static readonly byte[] buffer = new byte[4096];
+        private static Socket socket;
+
+        public static void Start(MainWindow window)
         {
             IPAddress[] IPAddresses = Dns.GetHostAddresses(Dns.GetHostName());
             try
             {
-                Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
+                socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
                 socket.Bind(new IPEndPoint(IPAddress.Parse("192.168.1.7"), 0));
                 socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.HeaderIncluded, true);
 
                 byte[] bytesIn = new byte[] { 1, 0, 0, 0 };
                 byte[] bytesOut = new byte[] { 1, 0, 0, 0 };
                 socket.IOControl(IOControlCode.ReceiveAll, bytesIn, bytesOut);
-                socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(Receive), socket);
+                socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(Receive), window);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
+                MessageBox.Show($"{e.Message}\n{e.StackTrace}");
             }
-            while (true) { }
         }
 
-        static void Receive(IAsyncResult result)
+        private static void Receive(IAsyncResult result)
         {
-            Socket socket = result.AsyncState as Socket;
+            MainWindow window = (MainWindow)result.AsyncState;
             //Console.WriteLine(result.AsyncState);
             int length = socket.EndReceive(result);
             IPHeader ipHeader = new IPHeader(buffer, length);
@@ -53,10 +53,12 @@ namespace SnifferWPF
                     break;
 
                 case TransportProtocol.Other:
-                    Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                    MessageBox.Show("TransportProtocol.Other");
                     break;
             }
-            socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(Receive), socket);
+            window.PacketList.Dispatcher.Invoke(new Action(() => window.AddPacketToList(ipHeader.Protocol.ToString())));
+
+            socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(Receive), window);
         }
     }
 }

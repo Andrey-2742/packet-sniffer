@@ -7,6 +7,15 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Button Content="btn" x:Name="btn" FontSize="30"></Button>
+        <ScrollViewer Grid.Column="1" Margin="10" VerticalScrollBarVisibility="Visible">
+            <StackPanel x:Name="PacketList">
+                
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

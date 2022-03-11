@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 
 namespace SnifferWPF
 {
@@ -40,8 +41,7 @@ namespace SnifferWPF
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
+                MessageBox.Show($"{e.Message}\n{e.StackTrace}");
             }
         }
     }
