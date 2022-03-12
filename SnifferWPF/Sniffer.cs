@@ -5,8 +5,6 @@ using System.Windows;
 
 namespace SnifferWPF
 {
-    enum TransportProtocol { ICMP = 1, TCP = 6, UDP = 17, Other = 0 }
-
     static class Sniffer
     {
         private static readonly byte[] buffer = new byte[4096];
@@ -35,10 +33,9 @@ namespace SnifferWPF
         private static void Receive(IAsyncResult result)
         {
             MainWindow window = (MainWindow)result.AsyncState;
-            //Console.WriteLine(result.AsyncState);
             int length = socket.EndReceive(result);
             IPHeader ipHeader = new IPHeader(buffer, length);
-            switch ((TransportProtocol)ipHeader.Protocol)
+            switch (ipHeader.Protocol)
             {
                 case TransportProtocol.TCP:
                     TCPHeader tcpHeader = new TCPHeader(ipHeader.Data);
@@ -52,11 +49,11 @@ namespace SnifferWPF
                     ICMPHeader icmpHeader = new ICMPHeader(ipHeader.Data);
                     break;
 
-                case TransportProtocol.Other:
-                    MessageBox.Show("TransportProtocol.Other");
+                default:
+                    //MessageBox.Show("Other");
                     break;
             }
-            window.PacketList.Dispatcher.Invoke(new Action(() => window.AddPacketToList(ipHeader.Protocol.ToString())));
+            window.Dispatcher.Invoke(new Action(() => window.CapturedPackets.Add(ipHeader)));
 
             socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(Receive), window);
         }

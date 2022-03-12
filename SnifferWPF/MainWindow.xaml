@@ -12,10 +12,45 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Button Content="btn" x:Name="btn" FontSize="30"></Button>
-        <ScrollViewer Grid.Column="1" Margin="10" VerticalScrollBarVisibility="Visible">
-            <StackPanel x:Name="PacketList">
-                
-            </StackPanel>
-        </ScrollViewer>
+        <DataGrid Grid.Column="1" ColumnWidth="*" Margin="10"
+                  ItemsSource="{Binding CapturedPackets}" AutoGenerateColumns="False"
+                  RowBackground="#FFE5F3FF" AlternatingRowBackground="#FFE8FFE5" AlternationCount="2">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Source IP" Binding="{Binding SourceIP}"/>
+                <DataGridTextColumn Header="Destination IP" Binding="{Binding DestinationIP}"/>
+                <DataGridTextColumn Header="Protocol" Binding="{Binding Protocol}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <!--<ListBox x:Name="phonesList" ItemsSource="{Binding CapturedPackets}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding SourceIP}" Margin="0 0 10 0"/>
+                        <TextBlock Text="{Binding DestinationIP}" Margin="0 0 10 0"/>
+                        <TextBlock Text="{Binding Protocol}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>-->
+        
+        <!--<ScrollViewer Grid.Column="1" Margin="10" VerticalScrollBarVisibility="Visible">
+            <ItemsControl x:Name="tStack" ItemsSource="{Binding Path=CapturedPackets}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding SourceIP}" Margin="0 0 10 0"/>
+                            <TextBlock Text="{Binding DestinationIP}" Margin="0 0 10 0"/>
+                            <TextBlock Text="{Binding Protocol}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>-->
     </Grid>
 </Window>

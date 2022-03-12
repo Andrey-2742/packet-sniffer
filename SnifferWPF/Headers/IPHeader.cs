@@ -2,11 +2,14 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Windows;
 
 namespace SnifferWPF
 {
-    class IPHeader
+    public enum TransportProtocol { ICMP = 1, TCP = 6, UDP = 17 }
+
+    public class IPHeader
     {
         private readonly byte rawVersion;
         private readonly byte rawHeaderLength;
@@ -22,9 +25,10 @@ namespace SnifferWPF
         private readonly uint rawDestinationAddress;
         private readonly byte[] data;
 
-        public byte[] Data { get => data; }
-        public byte Protocol { get => rawProtocol; }
-        public uint SourceIP { get => rawSourceAddress; }
+        public byte[] Data => data;
+        public TransportProtocol Protocol => (TransportProtocol)rawProtocol;
+        public string SourceIP => UIntToIPv4(rawSourceAddress);
+        public string DestinationIP => UIntToIPv4(rawDestinationAddress);
 
         public IPHeader(byte[] buffer, int length)
         {
@@ -66,6 +70,18 @@ namespace SnifferWPF
             {
                 MessageBox.Show($"{e.Message}\n{e.StackTrace}");
             }
+        }
+
+        public static string UIntToIPv4(uint ip)
+        {
+            byte[] bytes = BitConverter.GetBytes(ip);
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bytes);
+            }
+
+            return new IPAddress(bytes).ToString();
         }
     }
 }
