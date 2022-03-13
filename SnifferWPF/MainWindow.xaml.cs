@@ -1,31 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using SnifferWPF;
-using System.Net;
-using System.Net.Sockets;
 
 namespace SnifferWPF
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
         public ObservableCollection<IPHeader> CapturedPackets { get; private set; }
+
+        private IPHeader currentlySelected;
+        public IPHeader CurrentlySelected
+        {
+            get { return currentlySelected; }
+            set
+            {
+                if (currentlySelected != value)
+                {
+                    currentlySelected = value;
+                    OnPropertyChanged("CurrentlySelected");
+                }
+            }
+        }
 
         public MainWindow()
         {
@@ -33,6 +34,14 @@ namespace SnifferWPF
             DataContext = this;
             CapturedPackets = new ObservableCollection<IPHeader>();
             Sniffer.Start(this);
+        }
+
+        protected void OnPropertyChanged(string name)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+            }
         }
 
         //public void AddPacketToList(string text)
@@ -46,5 +55,16 @@ namespace SnifferWPF
 
         //    PacketList.Children.Add(newitem);
         //}
+
+        private void Row_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // Ensure row was clicked and not empty space
+            var row = ItemsControl.ContainerFromElement((DataGrid)sender,
+                                                e.OriginalSource as DependencyObject) as DataGridRow;
+            if (row == null) return;
+
+            CurrentlySelected = (IPHeader)row.Item;
+            MessageBox.Show(CurrentlySelected.SourceIP);
+        }
     }
 }
