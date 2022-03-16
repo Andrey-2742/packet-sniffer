@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using SnifferWPF.Headers;
 using System.Net;
 using System.Text;
 using System.Windows;
 
 namespace SnifferWPF
 {
-    class TCPHeader
+    class TCPHeader : ITransportLevelHeader
     {
         private readonly ushort rawSourcePort;
         private readonly ushort rawDestinationPort;
@@ -19,9 +20,8 @@ namespace SnifferWPF
         private readonly uint rawWindow;
         private readonly uint rawChecksum;
         private readonly uint rawUrgentPointer;
-        private readonly byte[] data;
 
-        public byte[] Data { get => data; }
+        public byte[] Data { get; set; }
 
         public TCPHeader(byte[] buffer)
         {
@@ -49,8 +49,8 @@ namespace SnifferWPF
 
                 rawUrgentPointer = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt16());
 
-                data = new byte[buffer.Length - rawOffset];
-                Array.Copy(buffer, rawOffset, data, 0, data.Length);
+                Data = new byte[buffer.Length - rawOffset];
+                Array.Copy(buffer, rawOffset, Data, 0, Data.Length);
 
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", "\n" + data.Length + "\n");
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", Encoding.Default.GetString(data));

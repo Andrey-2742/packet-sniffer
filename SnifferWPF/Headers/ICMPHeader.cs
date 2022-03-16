@@ -1,22 +1,22 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using SnifferWPF.Headers;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 
 namespace SnifferWPF
 {
-    class ICMPHeader
+    class ICMPHeader : ITransportLevelHeader
     {
         private const int HeaderLength = 8;
         private readonly byte rawType;
         private readonly byte rawCode;
         private readonly ushort rawChecksum;
         private readonly uint rawOtherInfo;
-        private readonly byte[] data;
 
-        public byte[] Data { get => data; }
+        public byte[] Data { get; set; }
 
         public ICMPHeader(byte[] buffer)
         {
@@ -32,8 +32,8 @@ namespace SnifferWPF
 
                 rawOtherInfo = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt32());
 
-                data = new byte[buffer.Length - HeaderLength];
-                Array.Copy(buffer, HeaderLength, data, 0, data.Length);
+                Data = new byte[buffer.Length - HeaderLength];
+                Array.Copy(buffer, HeaderLength, Data, 0, Data.Length);
 
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", "\n" + data.Length + "\n");
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", Encoding.Default.GetString(data));

@@ -6,24 +6,115 @@
         xmlns:local="clr-namespace:SnifferWPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <DataTemplate x:Key="IPPacket">
+            
+        </DataTemplate>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <Button Content="Start" Width="50" HorizontalAlignment="Left"/>
-            <Separator Grid.Row="1" Margin="0 5 0 0"/>
-            <TextBlock Grid.Row="2" Text="IP Header:"/>
-            <TextBlock Grid.Row="3"
-                       Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                              Path=CurrentlySelected.SourceIP}"/>
+            <Separator Grid.Row="1" Grid.ColumnSpan="2" Margin="0 5 0 0"/>
+            <Grid Grid.Row="2" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
+                    <WrapPanel Width="160">
+                        <TextBlock Text="Source IP: "/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      Path=CurrentlySelected.SourceIP}"/>
+                    </WrapPanel>
+                    <WrapPanel>
+                        <TextBlock Text="Destination IP: "/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      Path=CurrentlySelected.DestinationIP}"/>
+                    </WrapPanel>
+                </WrapPanel>
+                <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
+                    <WrapPanel Width="120">
+                        <TextBlock Text="IP Version: "/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      Path=CurrentlySelected.IPVersion}"/>
+                    </WrapPanel>
+                    <WrapPanel>
+                        <TextBlock Text="Transport Protocol: "/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      Path=CurrentlySelected.Protocol}"/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      Path=CurrentlySelected.RawProtocol}"/>
+                    </WrapPanel>
+                </WrapPanel>
+                <WrapPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
+                    <WrapPanel Width="120">
+                        <TextBlock Text="ID Number: "/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                          Path=CurrentlySelected.IdentificationNumber}"/>
+                    </WrapPanel>
+                    <WrapPanel Width="70">
+                        <TextBlock Text="Flags: "/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                          Path=CurrentlySelected.Flags}"/>
+                    </WrapPanel>
+                    <WrapPanel>
+                        <TextBlock Text="Offset: "/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                          Path=CurrentlySelected.FragmentOffset}"/>
+                    </WrapPanel>
+                </WrapPanel>
+                <WrapPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
+                    <WrapPanel Width="70">
+                        <TextBlock Text="TTL: "/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                          Path=CurrentlySelected.TTL}"/>
+                    </WrapPanel>
+                    <WrapPanel>
+                        <TextBlock Text="Checksum: "/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                          Path=CurrentlySelected.Checksum}"/>
+                    </WrapPanel>
+                </WrapPanel>
+            </Grid>
+            <Line xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  Grid.Row="3" Grid.ColumnSpan="2"
+                  X1="0"   Y1="3"
+                  X2="500" Y2="3"
+                  Stroke="Black" StrokeDashArray="4, 5" StrokeThickness="1"/>
+            <Grid Grid.Row="4" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+            </Grid>
         </Grid>
         <DataGrid Grid.Column="1" ColumnWidth="*" Margin="10"
                   ItemsSource="{Binding CapturedPackets}" AutoGenerateColumns="False"

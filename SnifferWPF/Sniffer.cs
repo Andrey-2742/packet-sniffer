@@ -35,24 +35,6 @@ namespace SnifferWPF
             MainWindow window = (MainWindow)result.AsyncState;
             int length = socket.EndReceive(result);
             IPHeader ipHeader = new IPHeader(buffer, length);
-            switch (ipHeader.Protocol)
-            {
-                case TransportProtocol.TCP:
-                    TCPHeader tcpHeader = new TCPHeader(ipHeader.Data);
-                    break;
-
-                case TransportProtocol.UDP:
-                    UDPHeader udpHeader = new UDPHeader(ipHeader.Data);
-                    break;
-
-                case TransportProtocol.ICMP:
-                    ICMPHeader icmpHeader = new ICMPHeader(ipHeader.Data);
-                    break;
-
-                default:
-                    //MessageBox.Show("Other");
-                    break;
-            }
             window.Dispatcher.Invoke(new Action(() => window.CapturedPackets.Add(ipHeader)));
 
             socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(Receive), window);

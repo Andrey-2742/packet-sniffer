@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SnifferWPF.Headers;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Net;
@@ -7,16 +8,15 @@ using System.Windows;
 
 namespace SnifferWPF
 {
-    class UDPHeader
+    class UDPHeader : ITransportLevelHeader
     {
         private const int HeaderLength = 8;
         private readonly ushort rawSourcePort;
         private readonly ushort rawDestinationPort;
         private readonly ushort rawMessageLength;
         private readonly ushort rawChecksum;
-        private readonly byte[] data;
 
-        public byte[] Data { get => data; }
+        public byte[] Data { get; set; }
 
         public UDPHeader(byte[] buffer)
         {
@@ -32,8 +32,8 @@ namespace SnifferWPF
 
                 rawChecksum = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt16());
 
-                data = new byte[buffer.Length - HeaderLength];
-                Array.Copy(buffer, HeaderLength, data, 0, data.Length);
+                Data = new byte[buffer.Length - HeaderLength];
+                Array.Copy(buffer, HeaderLength, Data, 0, Data.Length);
 
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", "\n" + data.Length + "\n");
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", Encoding.Default.GetString(data));
