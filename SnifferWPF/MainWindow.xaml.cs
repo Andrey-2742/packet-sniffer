@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,39 +11,16 @@ namespace SnifferWPF
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        public ObservableCollection<IPHeader> CapturedPackets { get; private set; }
-
-        private IPHeader currentlySelected;
-        public IPHeader CurrentlySelected
-        {
-            get { return currentlySelected; }
-            set
-            {
-                if (currentlySelected != value)
-                {
-                    currentlySelected = value;
-                    OnPropertyChanged("CurrentlySelected");
-                }
-            }
-        }
+        public static PacketInfoUpdater PIU { get; } = new PacketInfoUpdater();
+        public ObservableCollection<IPHeader> CapturedPackets { get; } = new ObservableCollection<IPHeader>();
 
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
-            CapturedPackets = new ObservableCollection<IPHeader>();
             Sniffer.Start(this);
-        }
-
-        protected void OnPropertyChanged(string name)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
         }
 
         //public void AddPacketToList(string text)
@@ -63,8 +42,13 @@ namespace SnifferWPF
                                                 e.OriginalSource as DependencyObject) as DataGridRow;
             if (row == null) return;
 
-            CurrentlySelected = (IPHeader)row.Item;
-            MessageBox.Show(CurrentlySelected.SourceIP);
+            PIU.CurrentlySelected = (IPHeader)row.Item;
+
+            foreach (TransportProtocol tp in Enum.GetValues(typeof(TransportProtocol)))
+            {
+                PIU[(int)tp] = PIU.CurrentlySelected.Protocol == tp;
+            }
+            //MessageBox.Show(Convert.ToString(PIU.CurrentlySelected.Protocol == TransportProtocol.TCP));
         }
     }
 }

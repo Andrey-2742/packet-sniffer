@@ -7,9 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
-        <DataTemplate x:Key="IPPacket">
-            
-        </DataTemplate>
+        <BooleanToVisibilityConverter x:Key="BTVC" />
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -22,6 +20,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -46,55 +45,55 @@
                     <WrapPanel Width="160">
                         <TextBlock Text="Source IP: "/>
                         <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                      Path=CurrentlySelected.SourceIP}"/>
+                                      Path=PIU.CurrentlySelected.SourceIP}"/>
                     </WrapPanel>
                     <WrapPanel>
                         <TextBlock Text="Destination IP: "/>
                         <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                      Path=CurrentlySelected.DestinationIP}"/>
+                                      Path=PIU.CurrentlySelected.DestinationIP}"/>
                     </WrapPanel>
                 </WrapPanel>
                 <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
                     <WrapPanel Width="120">
                         <TextBlock Text="IP Version: "/>
                         <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                      Path=CurrentlySelected.IPVersion}"/>
+                                      Path=PIU.CurrentlySelected.IPVersion}"/>
                     </WrapPanel>
                     <WrapPanel>
                         <TextBlock Text="Transport Protocol: "/>
                         <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                      Path=CurrentlySelected.Protocol}"/>
+                                      Path=PIU.CurrentlySelected.Protocol}"/>
                         <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                      Path=CurrentlySelected.RawProtocol}"/>
+                                      Path=PIU.CurrentlySelected.RawProtocol}"/>
                     </WrapPanel>
                 </WrapPanel>
                 <WrapPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
                     <WrapPanel Width="120">
                         <TextBlock Text="ID Number: "/>
                         <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                          Path=CurrentlySelected.IdentificationNumber}"/>
+                                          Path=PIU.CurrentlySelected.IdentificationNumber}"/>
                     </WrapPanel>
                     <WrapPanel Width="70">
                         <TextBlock Text="Flags: "/>
                         <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                          Path=CurrentlySelected.Flags}"/>
+                                          Path=PIU.CurrentlySelected.Flags}"/>
                     </WrapPanel>
                     <WrapPanel>
                         <TextBlock Text="Offset: "/>
                         <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                          Path=CurrentlySelected.FragmentOffset}"/>
+                                          Path=PIU.CurrentlySelected.FragmentOffset}"/>
                     </WrapPanel>
                 </WrapPanel>
                 <WrapPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
                     <WrapPanel Width="70">
                         <TextBlock Text="TTL: "/>
                         <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                          Path=CurrentlySelected.TTL}"/>
+                                          Path=PIU.CurrentlySelected.TTL}"/>
                     </WrapPanel>
                     <WrapPanel>
                         <TextBlock Text="Checksum: "/>
                         <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                          Path=CurrentlySelected.Checksum}"/>
+                                          Path=PIU.CurrentlySelected.Checksum}"/>
                     </WrapPanel>
                 </WrapPanel>
             </Grid>
@@ -115,6 +114,12 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
             </Grid>
+            <TextBlock Grid.Row="5" Text="tesetsets"
+                       Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                    Path=PIU[6], Converter={StaticResource BTVC}}"/>
+            <TextBlock Grid.Row="6" Text="werwerw"
+                       Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                    Path=PIU[17], Converter={StaticResource BTVC}}"/>
         </Grid>
         <DataGrid Grid.Column="1" ColumnWidth="*" Margin="10"
                   ItemsSource="{Binding CapturedPackets}" AutoGenerateColumns="False"
@@ -126,36 +131,5 @@
                 <DataGridTextColumn Header="Protocol" Binding="{Binding Protocol}"/>
             </DataGrid.Columns>
         </DataGrid>
-        
-        <!--<ListBox x:Name="phonesList" ItemsSource="{Binding CapturedPackets}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding SourceIP}" Margin="0 0 10 0"/>
-                        <TextBlock Text="{Binding DestinationIP}" Margin="0 0 10 0"/>
-                        <TextBlock Text="{Binding Protocol}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>-->
-        
-        <!--<ScrollViewer Grid.Column="1" Margin="10" VerticalScrollBarVisibility="Visible">
-            <ItemsControl x:Name="tStack" ItemsSource="{Binding Path=CapturedPackets}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding SourceIP}" Margin="0 0 10 0"/>
-                            <TextBlock Text="{Binding DestinationIP}" Margin="0 0 10 0"/>
-                            <TextBlock Text="{Binding Protocol}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>-->
     </Grid>
 </Window>

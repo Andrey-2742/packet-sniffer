@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace SnifferWPF
 {
-    public enum TransportProtocol { ICMP = 1, TCP = 6, UDP = 17, Other = 0 }
+    public enum TransportProtocol { ICMP = 1, IGMP = 2, TCP = 6, UDP = 17, Other = 0 }
 
     public class IPHeader
     {
