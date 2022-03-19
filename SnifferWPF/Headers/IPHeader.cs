@@ -21,22 +21,22 @@ namespace SnifferWPF
         private readonly ushort rawFragmentOffset;
         private readonly byte rawTTL;
         private readonly byte rawProtocol;
-        private readonly ushort rawChecksum;
+        private readonly short rawChecksum;
         private readonly uint rawSourceAddress;
         private readonly uint rawDestinationAddress;
+        private readonly byte[] data;
 
-        public byte RawProtocol => rawProtocol;
         public string IPVersion => GetIPVersion();
+        public string TOS => Convert.ToString(rawTOS, 2).PadLeft(8, '0');
         public ushort IdentificationNumber => rawIdentification;
         public ushort FragmentOffset => rawFragmentOffset;
         public string Flags => FlagsToString();
         public byte TTL => rawTTL;
         public TransportProtocol Protocol => (TransportProtocol)rawProtocol;
-        public ushort Checksum => rawChecksum;
+        public string Checksum => "0x" + Convert.ToString(rawChecksum, 16).ToUpper().PadLeft(4, '0');
         public string SourceIP => UIntToIPv4(rawSourceAddress);
         public string DestinationIP => UIntToIPv4(rawDestinationAddress);
-        public byte[] Data { get; set; }
-        public ITransportLevelHeader UnderlyingPacket { get; set; }
+        public ITransportLevelHeader UnderlyingPacket { get; private set; }
 
         public IPHeader(byte[] buffer, int length)
         {
@@ -46,7 +46,7 @@ namespace SnifferWPF
 
                 byte versionAndLength = br.ReadByte();
                 rawVersion = (byte)(versionAndLength >> 4);
-                rawHeaderLength = (byte)(versionAndLength & 0x0F);
+                rawHeaderLength = (byte)((versionAndLength & 0x0F) * 4);
 
                 rawTOS = br.ReadByte();
 
@@ -62,15 +62,16 @@ namespace SnifferWPF
 
                 rawProtocol = br.ReadByte();
 
-                rawChecksum = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt16());
+                rawChecksum = IPAddress.NetworkToHostOrder(br.ReadInt16());
 
                 rawSourceAddress = br.ReadUInt32();
 
                 rawDestinationAddress = br.ReadUInt32();
 
-                Data = new byte[rawTotalLength - rawHeaderLength];
-                Array.Copy(buffer, rawHeaderLength, Data, 0, Data.Length);
+                data = new byte[rawTotalLength - rawHeaderLength];
+                Array.Copy(buffer, rawHeaderLength, data, 0, data.Length);
 
+                //MessageBox.Show($"IP\n{length}\n{rawTotalLength}\n{rawTotalLength - rawHeaderLength}");
                 GetLevel4Packet();
 
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", "\n" + data.Length + "\n");
@@ -87,19 +88,23 @@ namespace SnifferWPF
             switch (Protocol)
             {
                 case TransportProtocol.TCP:
-                    UnderlyingPacket = new TCPHeader(Data);
+                    UnderlyingPacket = new TCPHeader(data);
                     break;
 
                 case TransportProtocol.UDP:
-                    UnderlyingPacket = new UDPHeader(Data);
+                    UnderlyingPacket = new UDPHeader(data);
                     break;
 
                 case TransportProtocol.ICMP:
-                    UnderlyingPacket = new ICMPHeader(Data);
+                    UnderlyingPacket = new ICMPHeader(data);
+                    break;
+
+                case TransportProtocol.IGMP:
+                    UnderlyingPacket = new IGMPHeader(data);
                     break;
 
                 case TransportProtocol.Other:
-                    //MessageBox.Show("Other");
+                    MessageBox.Show("Other");
                     break;
             }
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SnifferWPF.Headers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -23,6 +24,17 @@ namespace SnifferWPF
             }
         }
 
+        private bool dataVisibility;
+        public bool DataVisibility
+        {
+            get { return dataVisibility; }
+            set
+            {
+                dataVisibility = value;
+                OnPropertyChanged("DataVisibility");
+            }
+        }
+
         private IPHeader currentlySelected;
         public IPHeader CurrentlySelected
         {
@@ -30,6 +42,7 @@ namespace SnifferWPF
             set
             {
                 currentlySelected = value;
+                DataVisibility = !(currentlySelected.UnderlyingPacket is IGMPHeader);
                 OnPropertyChanged("CurrentlySelected");
             }
         }

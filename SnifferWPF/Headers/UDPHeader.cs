@@ -13,10 +13,16 @@ namespace SnifferWPF
         private const int HeaderLength = 8;
         private readonly ushort rawSourcePort;
         private readonly ushort rawDestinationPort;
-        private readonly ushort rawMessageLength;
-        private readonly ushort rawChecksum;
+        private readonly ushort rawSegmentLength;
+        private readonly short rawChecksum;
+        private readonly byte[] data;
 
-        public byte[] Data { get; set; }
+        public ushort SourcePort => rawSourcePort;
+        public ushort DestinationPort => rawDestinationPort;
+        public string Checksum => "0x" + Convert.ToString(rawChecksum, 16).ToUpper().PadLeft(4, '0');
+        public string Data => Encoding.Default.GetString(data);
+        public ushort Length => rawSegmentLength;
+        public ushort MessageLength => (ushort)(rawSegmentLength - HeaderLength);
 
         public UDPHeader(byte[] buffer)
         {
@@ -28,13 +34,15 @@ namespace SnifferWPF
 
                 rawDestinationPort = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt16());
 
-                rawMessageLength = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt16());
+                rawSegmentLength = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt16());
 
-                rawChecksum = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt16());
+                rawChecksum = IPAddress.NetworkToHostOrder(br.ReadInt16());
 
-                Data = new byte[buffer.Length - HeaderLength];
-                Array.Copy(buffer, HeaderLength, Data, 0, Data.Length);
+                data = new byte[buffer.Length - HeaderLength];
+                Array.Copy(buffer, HeaderLength, data, 0, Data.Length);
 
+                //if (rawSegmentLength != Data.Length)
+                //    MessageBox.Show($"UDP\n{buffer.Length}\n{rawSegmentLength}\n{Data.Length}");
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", "\n" + data.Length + "\n");
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", Encoding.Default.GetString(data));
                 //Console.WriteLine(Encoding.Default.GetString(data));

@@ -48,7 +48,7 @@ namespace SnifferWPF
             {
                 PIU[(int)tp] = PIU.CurrentlySelected.Protocol == tp;
             }
-            //MessageBox.Show(Convert.ToString(PIU.CurrentlySelected.Protocol == TransportProtocol.TCP));
+            //MessageBox.Show(PIU.CurrentlySelected.SequenceNumber);
         }
     }
 }
