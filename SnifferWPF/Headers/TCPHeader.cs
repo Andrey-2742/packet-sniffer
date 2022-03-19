@@ -16,7 +16,7 @@ namespace SnifferWPF
         private readonly uint rawSequenceNumber;
         private readonly uint rawAcknowledgementNumber;
         private readonly ushort rawOffset;
-        private readonly byte rawFlags;
+        private readonly ushort rawFlags;
         private readonly ushort rawWindow;
         private readonly short rawChecksum;
         private readonly ushort rawUrgentPointer;
@@ -50,7 +50,7 @@ namespace SnifferWPF
 
                 ushort offsetAndFlags = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt16());
                 rawOffset = (byte)((offsetAndFlags >> 12) * 4);
-                rawFlags = (byte)(offsetAndFlags & 0b_0000_0001_1111_1111);
+                rawFlags = (ushort)(offsetAndFlags & 0b_0000_0001_1111_1111);
 
                 rawWindow = (ushort)IPAddress.NetworkToHostOrder(br.ReadInt16());
 
@@ -81,13 +81,12 @@ namespace SnifferWPF
 
             for (int i = 0; i < Enum.GetValues(typeof(TCPFlag)).Length; i++)
             {
-                if (rawFlags >> (8 - i) == 1)
+                if ((rawFlags >> (8 - i) & 1) == 1)
                 {
                     flags.Add(((TCPFlag)i).ToString());
                 }
             }
-            return new StringBuilder().AppendJoin(' ', flags).ToString()//;
-            + Convert.ToString(rawFlags, 2);
+            return new StringBuilder().AppendJoin(", ", flags).ToString();
         }
     }
 }

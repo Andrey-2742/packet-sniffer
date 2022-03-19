@@ -12,6 +12,7 @@ namespace SnifferWPF
 
     public class IPHeader
     {
+        private readonly DateTime captureTime;
         private readonly byte rawVersion;
         private readonly byte rawHeaderLength;
         private readonly byte rawTOS;
@@ -26,6 +27,7 @@ namespace SnifferWPF
         private readonly uint rawDestinationAddress;
         private readonly byte[] data;
 
+        public string Capturetime => captureTime.ToString("HH:mm:ss");
         public string IPVersion => GetIPVersion();
         public string TOS => Convert.ToString(rawTOS, 2).PadLeft(8, '0');
         public ushort IdentificationNumber => rawIdentification;
@@ -42,6 +44,8 @@ namespace SnifferWPF
         {
             try
             {
+                captureTime = DateTime.Now;
+
                 BinaryReader br = new BinaryReader(new MemoryStream(buffer, 0, length));
 
                 byte versionAndLength = br.ReadByte();

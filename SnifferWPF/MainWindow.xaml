@@ -5,14 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SnifferWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="880">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BTVC" />
+        <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
         <Grid Margin="10">
             <Grid.ColumnDefinitions>
@@ -31,7 +34,12 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <Button Content="Start" Width="50" HorizontalAlignment="Left"/>
-            <Separator Grid.Row="1" Grid.ColumnSpan="2" Margin="0 5 0 0"/>
+            <Line xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  Grid.Row="1" Grid.ColumnSpan="2"
+                  X1="0"   Y1="10"
+                  X2="500" Y2="10"
+                  Stroke="Black" StrokeThickness="0.75"
+                  Margin="0 0 0 5"/>
             <Grid Grid.Row="2" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -42,80 +50,73 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
-                    <WrapPanel Width="160">
-                        <TextBlock Text="Source IP: "/>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                      Path=PIU.CurrentlySelected.SourceIP}"/>
-                    </WrapPanel>
-                    <WrapPanel>
-                        <TextBlock Text="Destination IP: "/>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                <WrapPanel Grid.Row="0" Grid.Column="0" Margin="0 0 0 2">
+                    <TextBlock Text="IP отправителя: "/>
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                        Path=PIU.CurrentlySelected.SourceIP}"/>
+                </WrapPanel>
+                <WrapPanel Grid.Row="1" Grid.Column="0" Margin="0 0 0 2">
+                    <TextBlock Text="IP получателя: "/>
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.DestinationIP}"/>
-                    </WrapPanel>
                 </WrapPanel>
-                <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
-                    <WrapPanel Width="120">
-                        <TextBlock Text="IP Version: "/>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                <WrapPanel Grid.Row="0" Grid.Column="1" Margin="0 0 0 2">
+                    <TextBlock Text="Версия IP: "/>
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.IPVersion}"/>
-                    </WrapPanel>
-                    <WrapPanel>
-                        <TextBlock Text="Transport Protocol: "/>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                </WrapPanel>
+                <WrapPanel Grid.Row="1" Grid.Column="1" Margin="0 0 0 2">
+                    <TextBlock Text="Транспортный протокол: "/>
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.Protocol}"/>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.RawProtocol}"/>
-                    </WrapPanel>
                 </WrapPanel>
-                <WrapPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
-                    <WrapPanel Width="120">
-                        <TextBlock Text="ID Number: "/>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                          Path=PIU.CurrentlySelected.IdentificationNumber}"/>
-                    </WrapPanel>
-                    <WrapPanel Width="70">
-                        <TextBlock Text="Flags: "/>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                          Path=PIU.CurrentlySelected.Flags}"/>
-                    </WrapPanel>
-                    <WrapPanel>
-                        <TextBlock Text="Offset: "/>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                          Path=PIU.CurrentlySelected.FragmentOffset}"/>
-                    </WrapPanel>
+                <WrapPanel Grid.Row="2" Grid.Column="0" Margin="0 0 0 2">
+                    <TextBlock Text="ID пакета: "/>
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      Path=PIU.CurrentlySelected.IdentificationNumber}"/>
                 </WrapPanel>
-                <WrapPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
-                    <WrapPanel Width="70">
-                        <TextBlock Text="TTL: "/>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                          Path=PIU.CurrentlySelected.TTL}"/>
-                    </WrapPanel>
-                    <WrapPanel Width="120">
-                        <TextBlock Text="Checksum: "/>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                          Path=PIU.CurrentlySelected.Checksum}"/>
-                    </WrapPanel> 
-                    <WrapPanel>
-                        <TextBlock Text="TOS: "/>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                          Path=PIU.CurrentlySelected.TOS}"/>
-                    </WrapPanel>
+                <WrapPanel Grid.Row="3" Grid.Column="0" Margin="0 0 0 2">
+                    <TextBlock Text="Флаги: "/>
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      Path=PIU.CurrentlySelected.Flags}"/>
+                </WrapPanel>
+                <WrapPanel Grid.Row="4" Grid.Column="0" Margin="0 0 0 2">
+                    <TextBlock Text="Смещение: "/>
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      Path=PIU.CurrentlySelected.Offset}"/>
+                </WrapPanel>
+                <WrapPanel Grid.Row="2" Grid.Column="1" Margin="0 0 0 2">
+                    <TextBlock Text="TOS: "/>
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      Path=PIU.CurrentlySelected.TOS}"/>
+                </WrapPanel>
+                <WrapPanel Grid.Row="3" Grid.Column="1" Margin="0 0 0 2">
+                    <TextBlock Text="Время жизни: "/>
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      Path=PIU.CurrentlySelected.TTL}"/>
+                </WrapPanel>
+                <WrapPanel Grid.Row="4" Grid.Column="1" Margin="0 0 0 2">
+                    <TextBlock Text="Контрольная сумма: "/>
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      Path=PIU.CurrentlySelected.Checksum}"/>
                 </WrapPanel>
             </Grid>
             <Line xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   Grid.Row="3" Grid.ColumnSpan="2"
                   X1="0"   Y1="5"
                   X2="500" Y2="5"
-                  Stroke="Black" StrokeDashArray="4, 5" StrokeThickness="1"
+                  Stroke="Black" StrokeDashArray="5, 5" StrokeThickness="1"
                   Margin="0 0 0 5"/>
             <Grid Grid.Row="4" Grid.ColumnSpan="2"
                   Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                Path=PIU[6], Converter={StaticResource BTVC}}">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -126,47 +127,47 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <WrapPanel Grid.Row="0" Grid.Column="0" Margin="0 0 0 2">
-                    <TextBlock Text="Source port: "/>
+                    <TextBlock Text="Порт источника: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                     Path=PIU.CurrentlySelected.UnderlyingPacket.SourcePort}"/>
                 </WrapPanel>
-                <WrapPanel Grid.Row="0" Grid.Column="1" Margin="0 0 0 2">
-                    <TextBlock Text="Destination port: "/>
+                <WrapPanel Grid.Row="1" Grid.Column="0" Margin="0 0 0 2">
+                    <TextBlock Text="Порт назначения: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.DestinationPort}"/>
                 </WrapPanel>
-                <WrapPanel Grid.Row="1" Grid.Column="0" Margin="0 0 0 2">
-                    <TextBlock Text="Sequence number: "/>
+                <WrapPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
+                    <TextBlock Text="Порядковый номер: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                     Path=PIU.CurrentlySelected.UnderlyingPacket.SequenceNumber}"/>
                 </WrapPanel>
-                <WrapPanel Grid.Row="1" Grid.Column="1">
-                    <TextBlock Text="Acknowledgement number: "/>
+                <WrapPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
+                    <TextBlock Text="Номер подтверждения: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.AcknowledgementNumber}"/>
                 </WrapPanel>
-                <WrapPanel Grid.Row="2" Grid.Column="0" Margin="0 0 0 2">
-                    <TextBlock Text="Flags: "/>
+                <WrapPanel Grid.Row="0" Grid.Column="1" Margin="0 0 0 2">
+                    <TextBlock Text="Флаги: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                     Path=PIU.CurrentlySelected.UnderlyingPacket.Flags}"/>
                 </WrapPanel>
-                <WrapPanel Grid.Row="2" Grid.Column="1" Margin="0 0 0 2">
-                    <TextBlock Text="Window: "/>
+                <WrapPanel Grid.Row="4" Grid.Column="0" Margin="0 0 0 2">
+                    <TextBlock Text="Размер окна: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                     Path=PIU.CurrentlySelected.UnderlyingPacket.Window}"/>
                 </WrapPanel>
-                <WrapPanel Grid.Row="3" Grid.Column="0" Margin="0 0 0 2">
-                    <TextBlock Text="Checksum: "/>
+                <WrapPanel Grid.Row="4" Grid.Column="1" Margin="0 0 0 2">
+                    <TextBlock Text="Контрольная сумма: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.Checksum}"/>
                 </WrapPanel>
-                <WrapPanel Grid.Row="3" Grid.Column="1" Margin="0 0 0 2">
-                    <TextBlock Text="Urgent pointer: "/>
+                <WrapPanel Grid.Row="1" Grid.Column="1" Margin="0 0 0 2">
+                    <TextBlock Text="Длина URG: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.UrgentPointer}"/>
                 </WrapPanel>
-                <WrapPanel Grid.Row="4" Grid.Column="0" Margin="0 0 0 2">
-                    <TextBlock Text="Data (length = "/>
+                <WrapPanel Grid.Row="5" Grid.Column="0" Margin="0 0 0 2">
+                    <TextBlock Text="Данные (длина = "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.MessageLength}"/>
                     <TextBlock Text="):"/>
@@ -176,34 +177,31 @@
                   Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                Path=PIU[17], Converter={StaticResource BTVC}}">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <WrapPanel Grid.Row="0" Grid.Column="0" Margin="0 0 0 2">
-                    <TextBlock Text="Source port: "/>
+                    <TextBlock Text="Порт источника: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                     Path=PIU.CurrentlySelected.UnderlyingPacket.SourcePort}"/>
                 </WrapPanel>
-                <WrapPanel Grid.Row="0" Grid.Column="1" Margin="0 0 0 2">
-                    <TextBlock Text="Destination port: "/>
+                <WrapPanel Grid.Row="1" Grid.Column="0" Margin="0 0 0 2">
+                    <TextBlock Text="Порт назначения: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.DestinationPort}"/>
                 </WrapPanel>
-                <WrapPanel Grid.Row="1" Grid.Column="0" Margin="0 0 0 2">
-                    <TextBlock Text="Checksum: "/>
+                <WrapPanel Grid.Row="0" Grid.Column="1" Margin="0 0 0 2">
+                    <TextBlock Text="Контрольная сумма: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.Checksum}"/>
                 </WrapPanel>
                 <WrapPanel Grid.Row="2" Grid.Column="0" Margin="0 0 0 2">
-                    <TextBlock Text="Data (length = "/>
+                    <TextBlock Text="Данные (длина = "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.MessageLength}"/>
                     <TextBlock Text="):"/>
@@ -213,38 +211,29 @@
                   Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                Path=PIU[1], Converter={StaticResource BTVC}}">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <WrapPanel Grid.Row="0" Grid.Column="0" Margin="0 0 0 2">
-                    <TextBlock Text="Type: "/>
-                    <TextBlock Width="40"
+                    <TextBlock Text="Тип: "/>
+                    <TextBlock Width="60"
                         Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                     Path=PIU.CurrentlySelected.UnderlyingPacket.Type}"/>
-                    <TextBlock Text="Code: "/>
+                    <TextBlock Text="Код: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                     Path=PIU.CurrentlySelected.UnderlyingPacket.Code}"/>
                 </WrapPanel>
                 <WrapPanel Grid.Row="0" Grid.Column="1" Margin="0 0 0 2">
-                    <TextBlock Text="Checksum: "/>
+                    <TextBlock Text="Контрольная сумма: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.Checksum}"/>
                 </WrapPanel>
                 <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
-                    <TextBlock Text="Other info: "/>
-                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                      Path=PIU.CurrentlySelected.UnderlyingPacket.OtherInfo}"/>
-                </WrapPanel>
-                <WrapPanel Grid.Row="2" Grid.Column="0" Margin="0 0 0 2">
-                    <TextBlock Text="Data (length = "/>
+                    <TextBlock Text="Данные (длина = "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.MessageLength}"/>
                     <TextBlock Text="):"/>
@@ -254,39 +243,41 @@
                   Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                Path=PIU[2], Converter={StaticResource BTVC}}">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <WrapPanel Grid.Row="0" Grid.Column="0" Margin="0 0 0 2">
-                    <TextBlock Text="Type: "/>
+                    <TextBlock Text="Тип: "/>
                     <TextBlock
                         Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                     Path=PIU.CurrentlySelected.UnderlyingPacket.Type}"/>
                 </WrapPanel>
                 <WrapPanel Grid.Row="0" Grid.Column="1" Margin="0 0 0 2">
-                    <TextBlock Text="Max response time: "/>
+                    <TextBlock Text="Макс. время ответа: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.MaxResponseTime}"/>
                 </WrapPanel>
                 <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 2">
-                    <TextBlock Text="Checksum: "/>
+                    <TextBlock Text="Контрольная сумма: "/>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.Checksum}"/>
                 </WrapPanel>
             </Grid>
-            <ScrollViewer Grid.Row="8" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"
-                          MaxHeight="120" VerticalScrollBarVisibility="Auto"
-                          Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                       Path=PIU.DataVisibility, Converter={StaticResource BTVC}}">
-                <TextBlock TextWrapping="WrapWithOverflow"
-                           Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                  Path=PIU.CurrentlySelected.UnderlyingPacket.Data}"/>
-            </ScrollViewer>
+            <Border Grid.Row="8" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"
+                    BorderThickness="0.5" BorderBrush="Black" Margin="0 3 0 0">
+                <ScrollViewer
+                              MaxHeight="120" VerticalScrollBarVisibility="Auto"
+                              Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                           Path=PIU.DataVisibility, Converter={StaticResource BTVC}}">
+                    <TextBlock TextWrapping="WrapWithOverflow" Margin="2"
+                               Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      Path=PIU.CurrentlySelected.UnderlyingPacket.Data}"/>
+                </ScrollViewer>
+            </Border>
         </Grid>
         <DataGrid Grid.Column="1" ColumnWidth="*" Margin="10"
                   ItemsSource="{Binding CapturedPackets}" AutoGenerateColumns="False"
@@ -299,9 +290,28 @@
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Source IP" Binding="{Binding SourceIP}"/>
-                <DataGridTextColumn Header="Destination IP" Binding="{Binding DestinationIP}"/>
-                <DataGridTextColumn Header="Protocol" Binding="{Binding Protocol}"/>
+                <DataGridTextColumn Width="8*" Header="IP отправителя" Binding="{Binding SourceIP}"
+                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}"/>
+                <DataGridTextColumn Width="8*" Header="IP получателя" Binding="{Binding DestinationIP}"
+                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}"/>
+                <DataGridTextColumn Width="5*" Header="Протокол" Binding="{Binding Protocol}"
+                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Width="5*" Header="Порт" Binding="{Binding UnderlyingPacket.DestinationPort, FallbackValue=-}"
+                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Width="8*" Header="Время перехвата" Binding="{Binding Capturetime}"
+                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
