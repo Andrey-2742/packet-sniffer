@@ -20,7 +20,7 @@ namespace SnifferWPF
         {
             InitializeComponent();
             DataContext = this;
-            Sniffer.Start(this);
+            Sniffer.Init(this);
         }
 
         //public void AddPacketToList(string text)
@@ -35,11 +35,21 @@ namespace SnifferWPF
         //    PacketList.Children.Add(newitem);
         //}
 
+        public void AddPacket(IPHeader packet)
+        {
+            CapturedPackets.Add(packet);
+            if (CapturedPackets.Count > 300000)
+            {
+                CapturedPackets.RemoveAt(0);
+            }
+        }
+
         private void Row_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             // Ensure row was clicked and not empty space
-            var row = ItemsControl.ContainerFromElement((DataGrid)sender,
-                                                e.OriginalSource as DependencyObject) as DataGridRow;
+            var row = ItemsControl.ContainerFromElement(
+                (DataGrid)sender, e.OriginalSource as DependencyObject) as DataGridRow;
+
             if (row == null) return;
 
             PIU.CurrentlySelected = (IPHeader)row.Item;
@@ -49,6 +59,20 @@ namespace SnifferWPF
                 PIU[(int)tp] = PIU.CurrentlySelected.Protocol == tp;
             }
             //MessageBox.Show(PIU.CurrentlySelected.SequenceNumber);
+        }
+
+        private void btnControl_Click(object sender, RoutedEventArgs e)
+        {
+            if (btnControl.Content.ToString() == "Начать перехват" || btnControl.Content.ToString() == "Продолжить перехват")
+            {
+                Sniffer.Start();
+                btnControl.Content = "Остановить перехват";
+            }
+            else
+            {
+                Sniffer.Stop();
+                btnControl.Content = "Продолжить перехват";
+            }
         }
     }
 }
