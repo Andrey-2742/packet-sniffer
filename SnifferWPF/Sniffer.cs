@@ -11,20 +11,20 @@ namespace SnifferWPF
         private static Socket socket;
         private static MainWindow window;
         private static bool stopPressed;
+        private static IPAddress currentInterface;
 
         public static void Init(MainWindow window)
         {
             Sniffer.window = window;
         }
 
-        public static void Start()
+        public static void Start(IPAddress ipAddress)
         {
+            currentInterface = ipAddress;
             try
             {
-                IPAddress[] IPAddresses = Dns.GetHostAddresses(Dns.GetHostName());
-
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
-                socket.Bind(new IPEndPoint(IPAddress.Parse("192.168.1.7"), 0));
+                socket.Bind(new IPEndPoint(currentInterface, 0));
                 socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.HeaderIncluded, true);
 
                 byte[] bytesIn = new byte[] { 1, 0, 0, 0 };
@@ -36,7 +36,7 @@ namespace SnifferWPF
             }
             catch (Exception e)
             {
-                MessageBox.Show($"{e.Message}\n{e.StackTrace}");
+                MessageBox.Show($"{e.GetType()}\n{e.Message}\n{e.StackTrace}");
             }
         }
 
@@ -56,12 +56,14 @@ namespace SnifferWPF
                 {
                     IPHeader ipHeader = new IPHeader(buffer, length);
                     window.Dispatcher.Invoke(new Action(() => window.AddPacket(ipHeader)));
-                    Start();
+                    Start(currentInterface);
                 }
             }
+            catch (ArgumentException)
+            { }
             catch (Exception e)
             {
-                MessageBox.Show($"{e.Message}\n{e.StackTrace}");
+                MessageBox.Show($"{e.GetType()}\n{e.Message}\n{e.StackTrace}");
             }
         }
     }

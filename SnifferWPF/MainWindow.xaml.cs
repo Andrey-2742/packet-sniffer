@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,12 +16,22 @@ namespace SnifferWPF
     {
         public static PacketInfoUpdater PIU { get; } = new PacketInfoUpdater();
         public ObservableCollection<IPHeader> CapturedPackets { get; } = new ObservableCollection<IPHeader>();
+        public IPAddress[] Addresses { get; } = Dns.GetHostAddresses(Dns.GetHostName());
+        public IPAddress CurrentAddress { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
-            Sniffer.Init(this);
+            if (Addresses.Length > 0)
+            {
+                CurrentAddress = Addresses[0];
+                Sniffer.Init(this);
+            }
+            else
+            {
+                MessageBox.Show("Не найден ни один IP-адрес хоста.", "", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
         }
 
         //public void AddPacketToList(string text)
@@ -65,7 +76,7 @@ namespace SnifferWPF
         {
             if (btnControl.Content.ToString() == "Начать перехват" || btnControl.Content.ToString() == "Продолжить перехват")
             {
-                Sniffer.Start();
+                Sniffer.Start(CurrentAddress);
                 btnControl.Content = "Остановить перехват";
             }
             else
@@ -73,6 +84,12 @@ namespace SnifferWPF
                 Sniffer.Stop();
                 btnControl.Content = "Продолжить перехват";
             }
+        }
+
+        private void cmbInterface_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+            CurrentAddress = (IPAddress)comboBox.SelectedItem;
         }
     }
 }
