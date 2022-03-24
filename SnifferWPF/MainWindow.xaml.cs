@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
 
 namespace SnifferWPF
 {
@@ -15,7 +19,8 @@ namespace SnifferWPF
     public partial class MainWindow : Window
     {
         public static PacketInfoUpdater PIU { get; } = new PacketInfoUpdater();
-        public ObservableCollection<IPHeader> CapturedPackets { get; } = new ObservableCollection<IPHeader>();
+        public ObservableCollection<IPHeader> FilteredPackets { get; private set; } = new ObservableCollection<IPHeader>();
+        public ObservableCollection<IPHeader> AllPackets { get; private set; } = new ObservableCollection<IPHeader>();
         public IPAddress[] Addresses { get; } = Dns.GetHostAddresses(Dns.GetHostName());
         public IPAddress CurrentAddress { get; set; }
 
@@ -34,30 +39,14 @@ namespace SnifferWPF
             }
         }
 
-        //public void AddPacketToList(string text)
-        //{
-        //    TextBlock newitem = new TextBlock();
-        //    newitem.Text = text;
-        //    newitem.Background = Brushes.Blue;
-        //    newitem.Foreground = Brushes.Yellow;
-        //    newitem.Padding = new Thickness(3);
-        //    newitem.Margin = new Thickness(0, 0, 0, 3);
-
-        //    PacketList.Children.Add(newitem);
-        //}
-
         public void AddPacket(IPHeader packet)
         {
-            CapturedPackets.Add(packet);
-            if (CapturedPackets.Count > 300000)
-            {
-                CapturedPackets.RemoveAt(0);
-            }
+            AllPackets.Add(packet);
+            FilteredPackets.Add(packet);
         }
 
         private void Row_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            // Ensure row was clicked and not empty space
             var row = ItemsControl.ContainerFromElement(
                 (DataGrid)sender, e.OriginalSource as DependencyObject) as DataGridRow;
 
@@ -90,6 +79,51 @@ namespace SnifferWPF
         {
             ComboBox comboBox = (ComboBox)sender;
             CurrentAddress = (IPAddress)comboBox.SelectedItem;
+        }
+
+        private void window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (Keyboard.FocusedElement is TextBox textBox)
+            {
+                Keyboard.ClearFocus();
+                
+                Regex regex = new Regex(textBox.Text);
+                FilteredPackets.Clear();
+                foreach (IPHeader asd in AllPackets)
+                {
+                    if (regex.IsMatch(asd.SourceIP))
+                        FilteredPackets.Add(asd);
+                }
+                MessageBox.Show(AllPackets.Count().ToString());
+            }
+        }
+
+        private void btnFilters_Click(object sender, RoutedEventArgs e)
+        {
+            PIU.FiltersVisibility = !PIU.FiltersVisibility;
+        }
+
+        private void btnAddFilterValue_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            StackPanel stackPanel = (StackPanel)button.Parent;
+
+            TextBox textBox = XamlReader.Parse(XamlWriter.Save(stackPanel.Children[0])) as TextBox;
+            textBox.MaxLength = 5;
+            textBox.Width = 40;
+            textBox.Margin = new Thickness(0, 0, 3, 0);
+            textBox.Visibility = Visibility.Visible;
+            stackPanel.Children.Insert(stackPanel.Children.Count - 2, textBox);
+        }
+
+        private void btnRemoveFilterValue_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            StackPanel stackPanel = (StackPanel)button.Parent;
+            for (int i = stackPanel.Children.Count - 3; i > 0; i--)
+            {
+                stackPanel.Children.RemoveAt(i);
+            }
         }
     }
 }

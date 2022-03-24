@@ -11,15 +11,26 @@ namespace SnifferWPF
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private readonly Dictionary<TransportProtocol, bool> visibility = new Dictionary<TransportProtocol, bool>();
+        private bool filtersVisibility = false;
+        public bool FiltersVisibility
+        {
+            get { return filtersVisibility; }
+            set
+            {
+                filtersVisibility = value;
+                OnPropertyChanged("FiltersVisibility");
+            }
+        }
+
+        private readonly Dictionary<TransportProtocol, bool> packetInfoVisibility = new Dictionary<TransportProtocol, bool>();
 
         [IndexerName ("Item")]
         public bool this[int protocol]
         {
-            get { return visibility[(TransportProtocol)protocol]; }
+            get { return packetInfoVisibility[(TransportProtocol)protocol]; }
             set
             {
-                visibility[(TransportProtocol)protocol] = value;
+                packetInfoVisibility[(TransportProtocol)protocol] = value;
                 OnPropertyChanged("Item[]");
             }
         }
