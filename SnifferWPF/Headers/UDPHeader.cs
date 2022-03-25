@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace SnifferWPF
 {
-    class UDPHeader : ITransportLevelHeader
+    class UDPHeader : ITransportLevelHeader, IHasPortInformation
     {
         private const int HeaderLength = 8;
         private readonly ushort rawSourcePort;
@@ -20,7 +20,7 @@ namespace SnifferWPF
         public ushort SourcePort => rawSourcePort;
         public ushort DestinationPort => rawDestinationPort;
         public string Checksum => "0x" + Convert.ToString(rawChecksum, 16).ToUpper().PadLeft(4, '0');
-        public string Data => Encoding.Default.GetString(data);
+        public string Data => Encoding.UTF8.GetString(data);
         public ushort Length => rawSegmentLength;
         public ushort MessageLength => (ushort)(rawSegmentLength - HeaderLength);
 
@@ -44,7 +44,7 @@ namespace SnifferWPF
                 //if (rawSegmentLength != Data.Length)
                 //    MessageBox.Show($"UDP\n{buffer.Length}\n{rawSegmentLength}\n{Data.Length}");
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", "\n" + data.Length + "\n");
-                //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", Encoding.Default.GetString(data));
+                File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", Encoding.Default.GetString(data));
                 //Console.WriteLine(Encoding.Default.GetString(data));
             }
             catch (Exception e)

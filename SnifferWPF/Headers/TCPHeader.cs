@@ -9,7 +9,8 @@ using System.Windows;
 namespace SnifferWPF
 {
     enum TCPFlag { NS, CWR, ECE, URG, ACK, PSH, PST, SYN, FIN }
-    class TCPHeader : ITransportLevelHeader
+
+    class TCPHeader : ITransportLevelHeader, IHasPortInformation
     {
         private readonly ushort rawSourcePort;
         private readonly ushort rawDestinationPort;
@@ -30,7 +31,7 @@ namespace SnifferWPF
         public ushort Window => rawWindow;
         public string Checksum => "0x" + Convert.ToString(rawChecksum, 16).ToUpper().PadLeft(4, '0');
         public ushort UrgentPointer => rawUrgentPointer;
-        public string Data => Encoding.Default.GetString(data);
+        public string Data => Encoding.UTF8.GetString(data);
         public ushort Length { get; private set; }
         public ushort MessageLength { get; private set; }
 
@@ -66,7 +67,7 @@ namespace SnifferWPF
                 //MessageBox.Show($"TCP\n{buffer.Length}\n{(ushort)(buffer.Length - rawOffset)}");
 
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", "\n" + data.Length + "\n");
-                //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", Encoding.Default.GetString(data));
+                File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", Encoding.Default.GetString(data));
                 //Console.WriteLine(Encoding.Default.GetString(data));
             }
             catch (Exception e)

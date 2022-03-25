@@ -19,7 +19,7 @@ namespace SnifferWPF
         public byte Type => rawType;
         public byte Code => rawCode;
         public string Checksum => "0x" + Convert.ToString(rawChecksum, 16).ToUpper().PadLeft(4, '0');
-        public string Data => BytesToString(data);
+        public string Data => Encoding.UTF8.GetString(data);
         public ushort Length => (ushort)data.Length;
         public ushort MessageLength => (ushort)(data.Length - HeaderLength);
 
@@ -46,16 +46,6 @@ namespace SnifferWPF
             {
                 MessageBox.Show($"{e.Message}\n{e.StackTrace}");
             }
-        }
-
-        public static string BytesToString(byte[] ba)
-        {
-            StringBuilder hex = new StringBuilder(ba.Length * 3);
-            foreach (byte b in ba)
-            {
-                hex.AppendFormat("{0:x2} ", b);
-            }
-            return hex.ToString();
         }
     }
 }

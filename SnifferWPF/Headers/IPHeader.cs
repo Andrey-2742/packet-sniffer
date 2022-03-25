@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace SnifferWPF
 {
-    public enum TransportProtocol { ICMP = 1, IGMP = 2, TCP = 6, UDP = 17, Other = 0 }
+    public enum TransportProtocol { ICMP = 1, IGMP = 2, TCP = 6, UDP = 17}
 
     public class IPHeader
     {
@@ -34,7 +34,8 @@ namespace SnifferWPF
         public ushort FragmentOffset => rawFragmentOffset;
         public string Flags => FlagsToString();
         public byte TTL => rawTTL;
-        public TransportProtocol Protocol => (TransportProtocol)rawProtocol;
+        public string Protocol => ((TransportProtocol)rawProtocol).ToString();
+        public byte ProtocolNumber => rawProtocol;
         public string Checksum => "0x" + Convert.ToString(rawChecksum, 16).ToUpper().PadLeft(4, '0');
         public string SourceIP => UIntToIPv4(rawSourceAddress);
         public string DestinationIP => UIntToIPv4(rawDestinationAddress);
@@ -91,24 +92,23 @@ namespace SnifferWPF
         {
             switch (Protocol)
             {
-                case TransportProtocol.TCP:
+                case "TCP":
                     UnderlyingPacket = new TCPHeader(data);
                     break;
 
-                case TransportProtocol.UDP:
+                case "UDP":
                     UnderlyingPacket = new UDPHeader(data);
                     break;
 
-                case TransportProtocol.ICMP:
+                case "ICMP":
                     UnderlyingPacket = new ICMPHeader(data);
                     break;
 
-                case TransportProtocol.IGMP:
+                case "IGMP":
                     UnderlyingPacket = new IGMPHeader(data);
                     break;
 
-                case TransportProtocol.Other:
-                    MessageBox.Show("Other");
+                default:
                     break;
             }
         }

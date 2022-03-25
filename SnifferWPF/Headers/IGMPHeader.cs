@@ -21,6 +21,7 @@ namespace SnifferWPF.Headers
         public string Checksum => "0x" + Convert.ToString(rawChecksum, 16).ToUpper().PadLeft(4, '0');
         public string GroupAddress => IPHeader.UIntToIPv4(rawGroupAddress);
         public ushort Length { get; private set; }
+        public string Data => string.Empty;
 
         public IGMPHeader(byte[] buffer)
         {

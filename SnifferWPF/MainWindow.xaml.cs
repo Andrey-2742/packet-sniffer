@@ -18,6 +18,7 @@ namespace SnifferWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly Filters filters = new Filters();
         public static PacketInfoUpdater PIU { get; } = new PacketInfoUpdater();
         public ObservableCollection<IPHeader> FilteredPackets { get; private set; } = new ObservableCollection<IPHeader>();
         public ObservableCollection<IPHeader> AllPackets { get; private set; } = new ObservableCollection<IPHeader>();
@@ -42,7 +43,10 @@ namespace SnifferWPF
         public void AddPacket(IPHeader packet)
         {
             AllPackets.Add(packet);
-            FilteredPackets.Add(packet);
+            if (filters.MatchPacket(packet))
+            {
+                FilteredPackets.Add(packet);
+            }
         }
 
         private void Row_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -56,7 +60,7 @@ namespace SnifferWPF
 
             foreach (TransportProtocol tp in Enum.GetValues(typeof(TransportProtocol)))
             {
-                PIU[(int)tp] = PIU.CurrentlySelected.Protocol == tp;
+                PIU[(int)tp] = PIU.CurrentlySelected.Protocol == tp.ToString();
             }
             //MessageBox.Show(PIU.CurrentlySelected.SequenceNumber);
         }
@@ -86,15 +90,6 @@ namespace SnifferWPF
             if (Keyboard.FocusedElement is TextBox textBox)
             {
                 Keyboard.ClearFocus();
-                
-                Regex regex = new Regex(textBox.Text);
-                FilteredPackets.Clear();
-                foreach (IPHeader asd in AllPackets)
-                {
-                    if (regex.IsMatch(asd.SourceIP))
-                        FilteredPackets.Add(asd);
-                }
-                MessageBox.Show(AllPackets.Count().ToString());
             }
         }
 
@@ -110,7 +105,7 @@ namespace SnifferWPF
 
             TextBox textBox = XamlReader.Parse(XamlWriter.Save(stackPanel.Children[0])) as TextBox;
             textBox.MaxLength = 5;
-            textBox.Width = 40;
+            textBox.Width = 43;
             textBox.Margin = new Thickness(0, 0, 3, 0);
             textBox.Visibility = Visibility.Visible;
             stackPanel.Children.Insert(stackPanel.Children.Count - 2, textBox);
@@ -123,6 +118,26 @@ namespace SnifferWPF
             for (int i = stackPanel.Children.Count - 3; i > 0; i--)
             {
                 stackPanel.Children.RemoveAt(i);
+            }
+        }
+
+        private void btnUpdateFilters_Click(object sender, RoutedEventArgs e)
+        {
+            filters.SourceIP = sourceIPFilter.Text;
+            filters.DestinationIP = destinationIPFilter.Text;
+            filters.Data = dataFilter.Text;
+            filters.Protocol = new List<string>(protocolFilter.Children.OfType<TextBox>().Select(x => x.Text).ToList());
+            filters.SourcePort = new List<string>(sourcePortFilter.Children.OfType<TextBox>().Select(x => x.Text).ToList());
+            filters.DestinationPort = new List<string>(destinationPortFilter.Children.OfType<TextBox>().Select(x => x.Text).ToList());
+            //MessageBox.Show($"{sourceIPFilter.Text}\n{filters.DestinationIP}\n{dataFilter.Text}\n{string.Join(' ', filters.Protocol)}\n" +
+            //    $"{string.Join(' ', filters.SourcePort)}\n{string.Join(' ', filters.DestinationPort)}");
+
+            MessageBox.Show("Фильтры применены.", "", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            FilteredPackets.Clear();
+            foreach (var packet in AllPackets.Where(p => filters.MatchPacket(p)))
+            {
+                FilteredPackets.Add(packet);
             }
         }
     }
