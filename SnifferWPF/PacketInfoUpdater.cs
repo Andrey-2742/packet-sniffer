@@ -53,7 +53,7 @@ namespace SnifferWPF
             set
             {
                 currentlySelected = value;
-                DataVisibility = !(currentlySelected.UnderlyingPacket is IGMPHeader);
+                DataVisibility = currentlySelected != null && !(currentlySelected.UnderlyingPacket is IGMPHeader);
                 OnPropertyChanged("CurrentlySelected");
             }
         }

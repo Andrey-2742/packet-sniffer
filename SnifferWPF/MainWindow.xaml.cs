@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace SnifferWPF
 {
@@ -29,6 +30,11 @@ namespace SnifferWPF
         {
             InitializeComponent();
             DataContext = this;
+
+            dispatcherTimer = new DispatcherTimer();
+            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
+
             if (Addresses.Length > 0)
             {
                 CurrentAddress = Addresses[0];
@@ -57,6 +63,8 @@ namespace SnifferWPF
             if (row == null) return;
 
             PIU.CurrentlySelected = (IPHeader)row.Item;
+            dashedLine.Visibility = Visibility.Visible;
+            IPGrid.Visibility = Visibility.Visible;
 
             foreach (TransportProtocol tp in Enum.GetValues(typeof(TransportProtocol)))
             {
@@ -93,6 +101,15 @@ namespace SnifferWPF
             }
         }
 
+        private void btnClear_Click(object sender, RoutedEventArgs e)
+        {
+            AllPackets.Clear();
+            FilteredPackets.Clear();
+            PIU.CurrentlySelected = null;
+            dashedLine.Visibility = Visibility.Collapsed;
+            IPGrid.Visibility = Visibility.Collapsed;
+        }
+
         private void btnFilters_Click(object sender, RoutedEventArgs e)
         {
             PIU.FiltersVisibility = !PIU.FiltersVisibility;
@@ -120,7 +137,7 @@ namespace SnifferWPF
                 stackPanel.Children.RemoveAt(i);
             }
         }
-
+        private DispatcherTimer dispatcherTimer;
         private void btnUpdateFilters_Click(object sender, RoutedEventArgs e)
         {
             filters.SourceIP = sourceIPFilter.Text;
@@ -132,13 +149,20 @@ namespace SnifferWPF
             //MessageBox.Show($"{sourceIPFilter.Text}\n{filters.DestinationIP}\n{dataFilter.Text}\n{string.Join(' ', filters.Protocol)}\n" +
             //    $"{string.Join(' ', filters.SourcePort)}\n{string.Join(' ', filters.DestinationPort)}");
 
-            MessageBox.Show("Фильтры применены.", "", MessageBoxButton.OK, MessageBoxImage.Information);
-
             FilteredPackets.Clear();
             foreach (var packet in AllPackets.Where(p => filters.MatchPacket(p)))
             {
                 FilteredPackets.Add(packet);
             }
+
+            test.Visibility = Visibility.Visible;
+            dispatcherTimer.Start();
+        }
+
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            test.Visibility = Visibility.Hidden;
+            dispatcherTimer.IsEnabled = false;
         }
     }
 }

@@ -7,8 +7,10 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Name="window"
-        
-        Title="Анализатор трафика" Height="500" Width="970" MouseDown="window_MouseDown">
+        Title="Анализатор трафика"
+        Height="500" Width="970"
+        MinHeight="400" MinWidth="970"
+        MouseDown="window_MouseDown">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BTVC"/>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
@@ -26,7 +28,7 @@
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
     </Window.Resources>
-    <Grid Name="grid">
+    <Grid Name="grid" Background="#FFF4F1E5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="8*"/>
             <ColumnDefinition Width="12*"/>
@@ -49,32 +51,41 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-                       VerticalAlignment="Bottom" Margin="0 0 0 5">
+            <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
                 <Button x:Name="btnControl" Content="Начать перехват"
-                    Width="139" Height="25" Padding="0 0 0 1.5" Margin="0 0 4 0"
-                    HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                    Click="btnControl_Click">
+                    Width="139" Height="25" Padding="0 0 0 1.5" Margin="0 0 5 5"
+                    VerticalAlignment="Bottom" Click="btnControl_Click">
                     <Button.Resources>
                         <Style TargetType="{x:Type Border}">
                             <Setter Property="CornerRadius" Value="1"/>
                         </Style>
                     </Button.Resources>
                 </Button>
-                <Button x:Name="btnFilters" Content="Фильтры" Height="25" Padding="7 0 7 1.5"
-                    HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="btnFilters_Click">
+                <Button x:Name="btnFilters" Content="Очистить" Height="25"
+                        Margin="0 0 5 5" Padding="7 0 7 1.5"
+                        VerticalAlignment="Bottom" Click="btnClear_Click">
                     <Button.Resources>
                         <Style TargetType="{x:Type Border}">
                             <Setter Property="CornerRadius" Value="1"/>
                         </Style>
                     </Button.Resources>
                 </Button>
-            </WrapPanel>
-            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Margin="0 0 0 5">
-                <TextBlock Text="Интерфейс прослушивания" Margin="0 0 0 3"/>
-                <ComboBox x:Name="cmbInterface" SelectedIndex="0" Width="154"
+                <Button x:Name="btnClear" Content="Фильтры" Height="25"
+                        Margin="0 0 5 5" Padding="7 0 7 1.5"
+                        VerticalAlignment="Bottom" Click="btnFilters_Click">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="1"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <StackPanel Orientation="Horizontal" Margin="0 0 5 5">
+                    <TextBlock Text="Интерфейс прослушивания:" Margin="0 0 5 0"
+                               VerticalAlignment="Center"/>
+                    <ComboBox x:Name="cmbInterface" SelectedIndex="0" Width="154"
                           ItemsSource="{Binding Addresses}" SelectionChanged="cmbInterface_SelectionChanged"/>
-            </StackPanel>
+                </StackPanel>
+            </WrapPanel>
             <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="filterList" Margin="10 2 0 0"
                   Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                Path=PIU.FiltersVisibility, Converter={StaticResource BTVC}}">
@@ -205,16 +216,19 @@
                         </Style>
                     </TextBox.Resources>
                 </TextBox>
-                <Button x:Name="btnUpdatePackets" Content="Применить"
-                        Grid.Row="6" Grid.ColumnSpan="2" HorizontalAlignment="Center"
-                        Width="76" Height="23" Padding="0 0 0 1.5" Margin="0 4 6 2"
-                        Click="btnUpdateFilters_Click">
+                <WrapPanel Grid.Row="6" Grid.Column="1">
+                    <Button x:Name="btnUpdatePackets" Content="Применить"
+                            Width="76" Height="23" Padding="0 0 0 1.5" Margin="30 4 20 2"
+                            Click="btnUpdateFilters_Click">
                     <Button.Resources>
                         <Style TargetType="{x:Type Border}">
                             <Setter Property="CornerRadius" Value="1"/>
                         </Style>
                     </Button.Resources>
-                </Button>
+                    </Button>
+                    <TextBlock x:Name="test" Text="Фильтры применены" Grid.Row="6" Grid.Column="0"
+                               Foreground="Green" VerticalAlignment="Center" Visibility="Hidden"/>
+                </WrapPanel>
             </Grid>
             <Line xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   Grid.Row="3" Grid.ColumnSpan="2"
@@ -222,7 +236,7 @@
                   X2="500" Y2="5"
                   Stroke="Black" StrokeThickness="0.75"
                   Margin="0 0 0 5"/>
-            <Grid Grid.Row="4" Grid.ColumnSpan="2">
+            <Grid Name="IPGrid" Grid.Row="4" Grid.ColumnSpan="2" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -285,12 +299,11 @@
                                       Path=PIU.CurrentlySelected.Checksum}"/>
                 </WrapPanel>
             </Grid>
-            <Line xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                  Grid.Row="5" Grid.ColumnSpan="2"
-                  X1="0"   Y1="5"
-                  X2="500" Y2="5"
-                  Stroke="Black" StrokeDashArray="5, 5" StrokeThickness="1"
-                  Margin="0 0 0 5"/>
+            <Line x:Name="dashedLine" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  Grid.Row="5" Grid.ColumnSpan="2" Margin="0 0 0 5" Visibility="Collapsed"
+                  X1="0"   Y1="6"
+                  X2="500" Y2="6"
+                  Stroke="Black" StrokeDashArray="10, 6" StrokeThickness="1"/>
             <Grid Grid.Row="6" Grid.ColumnSpan="2"
                   Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                Path=PIU[6], Converter={StaticResource BTVC}}">
@@ -448,12 +461,11 @@
                 </WrapPanel>
             </Grid>
             <Border Grid.Row="10" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"
-                    BorderThickness="0.5" BorderBrush="Black" Margin="0 3 0 0">
-                <ScrollViewer
-                              VerticalScrollBarVisibility="Auto"
-                              Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                                           Path=PIU.DataVisibility, Converter={StaticResource BTVC}}">
-                    <TextBlock TextWrapping="Wrap" Margin="2" Background="#fed" Padding="3"
+                    BorderThickness="0.5" BorderBrush="Black" Margin="0 3 0 0"
+                    Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                 Path=PIU.DataVisibility, Converter={StaticResource BTVC}}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBlock TextWrapping="Wrap" Margin="2" Padding="3" Background="White"
                                Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.Data}"/>
                 </ScrollViewer>
@@ -461,7 +473,7 @@
         </Grid>
         <DataGrid Grid.Column="1" ColumnWidth="*" Margin="10"
                   ItemsSource="{Binding FilteredPackets}" AutoGenerateColumns="False"
-                  RowBackground="#FFE5F3FF" AlternatingRowBackground="#FFE8FFE5" AlternationCount="2"
+                  RowBackground="#FFE4F0F4" AlternatingRowBackground="#FFE4F4EA" AlternationCount="2"
                   MouseLeftButtonUp="Row_MouseLeftButtonUp" IsReadOnly="True"
                   HeadersVisibility="Column">
             <DataGrid.Resources>
@@ -484,7 +496,7 @@
                 <DataGridTextColumn Width="5*" Header="Порт назначения" Binding="{Binding UnderlyingPacket.DestinationPort, FallbackValue=-}"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}"
                                     ElementStyle="{StaticResource CenterGridCellStyle}"/>
-                <DataGridTextColumn Width="8*" Header="Время перехвата" Binding="{Binding Capturetime}"
+                <DataGridTextColumn Width="7*" Header="Время перехвата" Binding="{Binding Capturetime}"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}"
                                     ElementStyle="{StaticResource CenterGridCellStyle}"/>
             </DataGrid.Columns>

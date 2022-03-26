@@ -17,17 +17,6 @@ namespace SnifferWPF
 
         public bool MatchPacket(IPHeader packet)
         {
-            if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.S))
-            {
-                System.Windows.MessageBox.Show($"{SourceIP}\n{DestinationIP}\n{Data}\n{string.Join(' ', Protocol)}\n" +
-                    $"{string.Join(' ', SourcePort)}\n{string.Join(' ', DestinationPort)}");
-                
-            }
-            return MatchRegex(packet);
-        }
-
-        private bool MatchRegex(IPHeader packet)
-        {
             bool flag = true;
 
             //System.Windows.MessageBox.Show("0");
