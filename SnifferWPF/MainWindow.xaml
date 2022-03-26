@@ -8,59 +8,30 @@
         mc:Ignorable="d"
         Name="window"
         
-        Title="Анализатор трафика" Height="450" Width="880" MouseDown="window_MouseDown">
+        Title="Анализатор трафика" Height="500" Width="970" MouseDown="window_MouseDown">
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BTVC" />
+        <BooleanToVisibilityConverter x:Key="BTVC"/>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="0 1 0 3"/>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding}" TextAlignment="Center"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
-        <ControlTemplate x:Key="TextFilter" TargetType="TextBox">
-            <TextBox HorizontalAlignment="Left" Width="130" Margin="0 0 0 3">
-                <TextBox.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="1"/>
-                    </Style>
-                </TextBox.Resources>
-            </TextBox>
-        </ControlTemplate>
-        <ControlTemplate x:Key="ProtocolFilter" TargetType="ScrollViewer">
-            <ScrollViewer Margin="0 0 0 3"
-                              VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                <StackPanel Orientation="Horizontal">
-                    <TextBox Width="43" Visibility="Collapsed">
-                        <TextBox.Resources>
-                            <Style TargetType="{x:Type Border}">
-                                <Setter Property="CornerRadius" Value="1"/>
-                            </Style>
-                        </TextBox.Resources>
-                    </TextBox>
-                    <Button Content="+" FontSize="20" Foreground="#555555" Padding="2 -7 1 -3"
-                            Margin="0 0 3 0" Click="btnAddFilterValue_Click">
-                        <Button.Resources>
-                            <Style TargetType="{x:Type Border}">
-                                <Setter Property="CornerRadius" Value="1"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    <Button Content="−" FontSize="20" Foreground="#555555" Padding="1 -7 1 -3"
-                            Click="btnRemoveFilterValue_Click">
-                        <Button.Resources>
-                            <Style TargetType="{x:Type Border}">
-                                <Setter Property="CornerRadius" Value="1"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                </StackPanel>
-            </ScrollViewer>
-        </ControlTemplate>
+        <Style x:Key="CenterGridCellStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
     </Window.Resources>
     <Grid Name="grid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="4*"/>
-            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="8*"/>
+            <ColumnDefinition Width="12*"/>
         </Grid.ColumnDefinitions>
-        <Grid Margin="10">
+        <Grid Margin="10 10 5 10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -76,7 +47,7 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
                        VerticalAlignment="Bottom" Margin="0 0 0 5">
@@ -479,10 +450,10 @@
             <Border Grid.Row="10" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"
                     BorderThickness="0.5" BorderBrush="Black" Margin="0 3 0 0">
                 <ScrollViewer
-                              MaxHeight="120" VerticalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Auto"
                               Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                            Path=PIU.DataVisibility, Converter={StaticResource BTVC}}">
-                    <TextBlock TextWrapping="Wrap" Margin="2"
+                    <TextBlock TextWrapping="Wrap" Margin="2" Background="#fed" Padding="3"
                                Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                                       Path=PIU.CurrentlySelected.UnderlyingPacket.Data}"/>
                 </ScrollViewer>
@@ -491,7 +462,8 @@
         <DataGrid Grid.Column="1" ColumnWidth="*" Margin="10"
                   ItemsSource="{Binding FilteredPackets}" AutoGenerateColumns="False"
                   RowBackground="#FFE5F3FF" AlternatingRowBackground="#FFE8FFE5" AlternationCount="2"
-                  MouseLeftButtonUp="Row_MouseLeftButtonUp" IsReadOnly="True">
+                  MouseLeftButtonUp="Row_MouseLeftButtonUp" IsReadOnly="True"
+                  HeadersVisibility="Column">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridCell}">
                     <Setter Property="BorderThickness" Value="0"/>
@@ -499,28 +471,22 @@
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Width="8*" Header="IP отправителя" Binding="{Binding SourceIP}"
+                <DataGridTextColumn Width="7*" Header="IP отправителя" Binding="{Binding SourceIP}"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}"/>
-                <DataGridTextColumn Width="8*" Header="IP получателя" Binding="{Binding DestinationIP}"
+                <DataGridTextColumn Width="7*" Header="IP получателя" Binding="{Binding DestinationIP}"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}"/>
                 <DataGridTextColumn Width="5*" Header="Протокол" Binding="{Binding Protocol}"
-                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Width="5*" Header="Порт" Binding="{Binding UnderlyingPacket.DestinationPort, FallbackValue=-}"
-                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center" />
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}"
+                                    ElementStyle="{StaticResource CenterGridCellStyle}"/>
+                <DataGridTextColumn Width="5*" Header="Порт источника" Binding="{Binding UnderlyingPacket.SourcePort, FallbackValue=-}"
+                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}"
+                                    ElementStyle="{StaticResource CenterGridCellStyle}"/>
+                <DataGridTextColumn Width="5*" Header="Порт назначения" Binding="{Binding UnderlyingPacket.DestinationPort, FallbackValue=-}"
+                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}"
+                                    ElementStyle="{StaticResource CenterGridCellStyle}"/>
                 <DataGridTextColumn Width="8*" Header="Время перехвата" Binding="{Binding Capturetime}"
-                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}"/>
+                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}"
+                                    ElementStyle="{StaticResource CenterGridCellStyle}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
