@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -42,7 +43,12 @@ namespace SnifferWPF
             set
             {
                 dataVisibility = value;
+                foreach (TransportProtocol tp in packetInfoVisibility.Keys.ToList())
+                {
+                    packetInfoVisibility[tp] = false;
+                }
                 OnPropertyChanged("DataVisibility");
+                OnPropertyChanged("Item[]");
             }
         }
 

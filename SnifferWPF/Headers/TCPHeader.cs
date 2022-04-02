@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace SnifferWPF
 {
-    enum TCPFlag { NS, CWR, ECE, URG, ACK, PSH, PST, SYN, FIN }
+    enum TCPFlag { NS, CWR, ECE, URG, ACK, PSH, RST, SYN, FIN }
 
     class TCPHeader : ITransportLevelHeader, IHasPortInformation
     {

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +24,8 @@ namespace SnifferWPF
         public static PacketInfoUpdater PIU { get; } = new PacketInfoUpdater();
         public ObservableCollection<IPHeader> FilteredPackets { get; private set; } = new ObservableCollection<IPHeader>();
         public ObservableCollection<IPHeader> AllPackets { get; private set; } = new ObservableCollection<IPHeader>();
-        public IPAddress[] Addresses { get; } = Dns.GetHostAddresses(Dns.GetHostName());
+        public IPAddress[] Addresses { get; } = Dns.GetHostAddresses(Dns.GetHostName())
+                                                .Where(x => x.AddressFamily == AddressFamily.InterNetwork).ToArray();
         public IPAddress CurrentAddress { get; set; }
 
         public MainWindow()
