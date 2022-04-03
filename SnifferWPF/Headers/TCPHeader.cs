@@ -67,7 +67,7 @@ namespace SnifferWPF
                 //MessageBox.Show($"TCP\n{buffer.Length}\n{(ushort)(buffer.Length - rawOffset)}");
 
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", "\n" + data.Length + "\n");
-                File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", Encoding.Default.GetString(data));
+                //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", Encoding.Default.GetString(data));
                 //Console.WriteLine(Encoding.Default.GetString(data));
             }
             catch (Exception e)

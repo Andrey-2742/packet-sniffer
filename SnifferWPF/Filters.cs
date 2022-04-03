@@ -96,8 +96,6 @@ namespace SnifferWPF
             {
                 return false;
             }
-            if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.S))
-                System.Windows.MessageBox.Show("5");
 
             foreach (string value in DestinationPort)
             {

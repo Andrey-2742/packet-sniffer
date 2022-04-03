@@ -44,7 +44,7 @@ namespace SnifferWPF
                 //if (rawSegmentLength != Data.Length)
                 //    MessageBox.Show($"UDP\n{buffer.Length}\n{rawSegmentLength}\n{Data.Length}");
                 //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", "\n" + data.Length + "\n");
-                File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", Encoding.Default.GetString(data));
+                //File.AppendAllText("C:\\Users\\johncji\\Desktop\\text.txt", Encoding.Default.GetString(data));
                 //Console.WriteLine(Encoding.Default.GetString(data));
             }
             catch (Exception e)

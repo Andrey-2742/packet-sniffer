@@ -50,9 +50,9 @@ namespace SnifferWPF
 
         public void AddPacket(IPHeader packet)
         {
-            AllPackets.Add(packet);
             if (filters.MatchPacket(packet))
             {
+                AllPackets.Add(packet);
                 FilteredPackets.Add(packet);
             }
         }
